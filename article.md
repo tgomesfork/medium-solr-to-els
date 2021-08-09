@@ -6,18 +6,65 @@ Actually it was a few months ago and TheFork is already based in a lot of countr
 ## What do we need to search for?
 As you might know (or maybe not), TheFork allows for a customer to book a restaurant. So we have these two related entities: **Reservation** and **Customer**
 
-We use a microservice architecture, so each of these entities live on their own microservice.
+We use a microservice architecture and each of these entities live on their own microservice.
 
-But if we want to seach for a customer or a reservation, we want to display them as fast as possible, so not from a database but from our Solr instance.
+When a restaurant user wants to search for a customer or a reservation, we want to display them as fast as possible, so certainly not from a database but from a dedicated search instance.
 ## The old ways (Solr)
 
-Why did we want to move away from Solr? It was not the technology itself that had issues, but we had a lot of new functional needs and a desire to start fresh.
+We had an instance of SolR indexing customers and reservations everytime the user created a reservation or added a new customer.
 
-We had a lot of unneeded fields on our index that were just for information retrieval. We already had this fields on our database if we were not searching for them, we did not need this duplicated data.
+So why did we want to move away from Solr?
 
-So we wanted a fresh new index with only the needed fields and a fresh new technology.
+It was not the technology itself that had issues, but we had a lot of new functional needs and a desire to start fresh. Most of the developers that worked on the previous search solution had already left the company, the current solution and the decisions behind were not clear anymore for the rest of us.
+
+For instance, we had a lot of unneeded fields on our index just for information retrieval. We already had these fields on our database and if they ere not searchable, we did not need to duplicate them. Why were those fields there?
+
+The feature itself was not working perfectly, it took something like 3 minutes to index a customer or reservation. Just imagine the restaurant user adding a reservation and having to wait 3 minutes to search for it! Definitly we had to improve this...
+
+So we dreamed of a brand new index with only the essentiald fields and a fresh new technology to learn and on top of this we had one major goal: be faster.
 ## Learning with Elasticsearch
 
 After some technology discovery from our architecture team, the decision was to go with Elasticsearch.
+- it is widely used
+- it feats our docker/aws infrastructure
+- insert and improve more reasons
 
-But we had an issue, we had no one with knowledge on this technology. And most of the developers that worked on the previous search solution had also already left the company.
+But there was a tiny issue: we had no one with knowledge on this technology and our knowledge on the current behaviour of the project was very little. Ah, we were almost forgetting, we had 1 month to complete the project.
+
+First thing we did, how surprising, was to study through online courses the 101 on elasticsearch. We learnt we had to create and index to store the documents following a mapping we would have to define. Then we would have to define the search to retrieve relevant documents from this index.
+
+// we talked to dome guru guy
+
+As soon as we could understand the basics, we tried the hands dirty approach and we sketched a first mapping. As we said, we wanted a slim approach: only store fields that the search will use, do not store any information not used for the search.
+
+The we defined some relevance rules. We typed some examples and defined what should be the order of the results. Once having this specification, we started to work on a search that gaves us the documents we searched for in the correct order.
+
+// continue describing what we did
+
+## Results
+
+We had one performance **Key Result** that stated *"Customer searches calls are returned in less than 300 ms vs 500 ms today."*
+
+So, were we able to achieve this?
+
+We completely overachieved this! We were able to get to a median call time of **19ms**!
+
+We can see some more details here of our new customer search call times:
+
+|     | max    | avg |
+| --- | ------ | ------ |
+| **p25** | 18 ms  | 15 ms  |
+| **p50** | 25 ms  | 19 ms  |
+| **p75** | 58 ms  | 26 ms  |
+| **p95** | 229 ms | 115 ms |
+| **p99** | 969 ms | 180 ms |
+
+We can see that this bet was a total success!
+
+We went from knowing nothing about how our search implementation worked, to completelly changing our search infrastructure to a different technology and improving its performance greatly.
+
+## What did we learn?
+
+From working on this bet we should conclude that we should not be afraid of change. We can challenge ourselves to achieve better results.
+
+We hypothesized that there was a better technology to achieve what we were already doing. We learned it and tried to apply it. We could have failed, but on this case it turned out to be the right move, and we could not be happier about it.
