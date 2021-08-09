@@ -38,3 +38,33 @@ First thing we did, how surprising, was to study through online courses the 101 
 As soon as we could understand the basics, we tried the hands dirty approach and we sketched a first mapping. As we said, we wanted a slim approach: only store fields that the search will use, do not store any information not used for the search.
 
 The we defined some relevance rules. We typed some examples and defined what should be the order of the results. Once having this specification, we started to work on a search that gaves us the documents we searched for in the correct order.
+
+// continue describing what we did
+
+## Results
+
+We had one performance **Key Result** that stated *"Customer searches calls are returned in less than 300 ms vs 500 ms today."*
+
+So, were we able to achieve this?
+
+We completely overachieved this! We were able to get to a median call time of **19ms**!
+
+We can see some more details here of our new customer search call times:
+
+|     | max    | avg |
+| --- | ------ | ------ |
+| **p25** | 18 ms  | 15 ms  |
+| **p50** | 25 ms  | 19 ms  |
+| **p75** | 58 ms  | 26 ms  |
+| **p95** | 229 ms | 115 ms |
+| **p99** | 969 ms | 180 ms |
+
+We can see that this bet was a total success!
+
+We went from knowing nothing about how our search implementation worked, to completelly changing our search infrastructure to a different technology and improving its performance greatly.
+
+## What did we learn?
+
+From working on this bet we should conclude that we should not be afraid of change. We can challenge ourselves to achieve better results.
+
+We hypothesized that there was a better technology to achieve what we were already doing. We learned it and tried to apply it. We could have failed, but on this case it turned out to be the right move, and we could not be happier about it.
